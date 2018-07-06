@@ -1,0 +1,18 @@
+---
+
+  - debug:
+      msg: "type should take values deploy,deployproperty,purge,all "
+    when: type == ''
+  - fail:
+      msg: "Playbook fail , Please enter value for type"
+    when: type == ''
+  - import_tasks: common.yml
+
+  - import_tasks: deploy.yml
+    when: type == 'deploy' or type == 'all'  
+    
+  - import_tasks: deployproperty.yml
+    when: type == 'deployproperty' or type == 'all'  
+
+  - import_tasks: purge.yml
+    when: type == 'purge' or type == 'all'  

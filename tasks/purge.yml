@@ -1,0 +1,18 @@
+---
+      
+    - block:
+    
+      - name: Ansible delete file .log
+        find:
+          paths: /home/U65989/ESP/logs/
+          patterns: "*.log"
+          age: 1d
+        register: files_to_delete
+
+      - name: Ansible remove file .log
+        file:
+          path: "{{ item.path }}"
+          state: absent
+        with_items: "{{ files_to_delete.files }}"
+ 
+      

@@ -1,0 +1,20 @@
+---
+    
+    - name: Ansible check file exists 
+      stat:
+        path: /home/U65989/ESP
+      register: file_details_ESP  
+    - name: Creates directory
+      file: path=/home/U65989/ESP state=directory
+      when: not file_details_ESP.stat.exists
+    
+    - name: Ansible check file exists 
+      stat:
+        path: /home/U65989/ESP/logs
+      register: file_details_ESP_logs
+    
+    - name: Creates directory
+      file: path=/home/U65989/ESP/logs state=directory
+      when: not file_details_ESP_logs.stat.exists    
+        
+    

@@ -1,0 +1,76 @@
+---
+    
+     
+    - block:
+    
+      - name: Ansible check file exists 
+        stat:
+          path: /home/U65989/ESP/deploy
+        register: file_details
+      
+      - name: remove files and directories
+        file:
+          state: absent
+          path: "/home/U65989/ESP/deploy"
+          mode: '0777'
+        when: file_details.stat.exists
+
+     
+      - name: Creates directory
+        file: path=/home/U65989/ESP/deploy state=directory
+       
+    
+      - name: Checking the war/zip file status on git
+        uri:
+          url: "http://172.31.23.100/deployproperties.zip" 
+          status_code: 200,201,202
+        register: result
+
+      - name: print the result
+        debug:
+          msg: "{{result}}"
+
+      - name: Downloading the war/zip file from the git repository
+        get_url:
+          url: "http://172.31.23.100/deployproperties.zip"
+          dest: /home/ubuntu/Akash/
+          mode: 0777
+        when: result.status == 200
+      - fail:
+          msg: "Playbook fail"
+        when: result.status != 200
+        
+      - name: Creating Log file
+        file:
+          dest: "/home/U65989/ESP/logs/deployproperty.log"
+          state: touch
+        
+      - name: Writing  into logfile .
+        lineinfile:
+          path: /home/U65989/ESP/logs/deployproperty.log
+          line: File deployproperty.zip downloaded
+   
+      - name: extract the downloaded zip file to tmp folder
+        unarchive:
+          src: "/home/ubuntu/Akash/deployproperties.zip"
+          dest: "/home/U65989/ESP/properties/"
+          mode: 0777 
+          
+      - name: Writing  into logfile .
+        lineinfile:
+          path: /home/U65989/ESP/logs/deployproperty.log
+          line: Extracted deployproperty.zip 
+          
+      - name: remove files and directories
+        file:
+          state: absent
+          path: "/home/ubuntu/Akash/deployproperties.zip"
+          mode: '0777'
+          
+      - name: Writing  into logfile .
+        lineinfile:
+          path: /home/U65989/ESP/logs/deployproperty.log
+          line: Deleted deployproperty.zip 
+   
+    
+     
